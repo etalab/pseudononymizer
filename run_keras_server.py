@@ -10,7 +10,7 @@
 from itertools import groupby
 
 import flask
-
+from flask_cors import CORS, cross_origin
 # import sys
 # sys.path.append("/home/pavel/temp/ukp_forks/emnlp2017-bilstm-cnn-crf")
 from flask import request
@@ -27,6 +27,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
+CORS(app)
 model = None
 keyword_processor = None
 training_tags = None
@@ -67,7 +68,7 @@ def load_model():
     global training_tags
 
     model = BiLSTM.loadModel("./model/model_jurica_rest")
-    model.models["jurica_enriched"]._make_predict_function()
+    model.models["jurica_enriched"]._make_predict_function()  # This is to avoid troubles with  Flask's threads
     training_tags = get_model_tags(model)
     logging.info("Loaded NER model...")
 
@@ -172,7 +173,7 @@ def prepare_output(tagged_conll_sequences, tags_to_use, replacement_token="…")
             re_finder = re.findall('\w-({})'.format("|".join(tags_to_use)), tag)
             if re_finder:
                 pseudonim_tok = replacement_token
-                tagged_tok = "<{0}>{1}</{2}>".format(tag, tok, tag)
+                tagged_tok = "[{0}]{1}[/{2}]".format(tag, tok, tag)
                 logger.info("Replaced token {0} with replacement-token {1}".format(tok, replacement_token))
             tokens_tagged.append(tagged_tok)
             tokens_pseudonim.append(pseudonim_tok)
@@ -192,9 +193,11 @@ def prepare_output(tagged_conll_sequences, tags_to_use, replacement_token="…")
 
 
 @app.route("/tag", methods=["POST"])
+@cross_origin()
 def tag():
     # initialize the data dictionary that will be returned from the
     # view
+
     data = {"success": False}
 
     # ensure an image was properly uploaded to our endpoint
@@ -241,6 +244,14 @@ def tag():
         finally:
             # return the data dictionary as a JSON response
             return flask.jsonify(data)
+
+@app.after_request
+def after_request(response):
+    # response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 
 # if this is the main thread of execution first load the model and
