@@ -67,6 +67,7 @@ def load_model():
     global training_tags
 
     model = BiLSTM.loadModel("./model/model_jurica_rest")
+    model.models["jurica_enriched"]._make_predict_function()
     training_tags = get_model_tags(model)
     logging.info("Loaded NER model...")
 
