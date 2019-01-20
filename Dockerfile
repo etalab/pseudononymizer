@@ -4,7 +4,15 @@ COPY . /app
 
 WORKDIR /app
 
-RUN  conda env create --file environment.yml
+RUN  apt-get update -y
+
+RUN  apt-get install build-essential -y
+
+RUN  apt-get install unzip
+
+#RUN conda install libgcc gcc -c conda-forge
+
+RUN  conda env update --file environment.yml
 
 RUN wget https://github.com/psorianom/emnlp2017-bilstm-cnn-crf/archive/master.zip
 
@@ -12,8 +20,10 @@ RUN unzip master.zip
 
 # RUN  conda activate pseudonim_REST
 
-ENTRYPOINT ["/opt/conda/envs/pseudonim_REST/bin/python"]
+EXPOSE 5001
 
-ENV PYTHONPATH "${PYTHONPATH}:/emnlp2017-bilstm-cnn-crf-master/"
+ENTRYPOINT ["/opt/conda/envs/pseudonym_api/bin/python"]
+
+ENV PYTHONPATH ./emnlp2017-bilstm-cnn-crf-master/
 
 CMD ["run_keras_server.py"]
