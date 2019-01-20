@@ -262,4 +262,4 @@ if __name__ == "__main__":
 
     load_names_processor()
     load_model()
-    app.run(port=5001)
+    app.run(port=5001, host="0.0.0.0")
