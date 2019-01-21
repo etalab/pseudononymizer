@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Pseudonymization Test</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<!-- Form -->
+<form action="" method="post" id="text-form" class="text-form">
+          <textarea name="query" class="form-control" rows="5">
+            Représenté par Me Florian DELISLE , avocat au barreau de LYON
+
+            Assisté de Me Pierre BESNARD, avocat au barreau de ROUEN
+
+            INTIMÉES
+
+            SARL MOS AMBULANCE
+
+            ayant son siège social 99 rue Brice Arsenault BP 53333
+
+            69008 LYON
+
+            Représentée par Me Gérôme COURTET, avocat au barreau de DOUAI
+
+            Assistée de Me Léonard HENNEQUIN, avocat au barreau de REIMS, substitué par Me COULOMB, associé
+          </textarea>
+    <button type="submit" id="submit">Pseudonymize!</button>
+</form>
+
+<!-- Result -->
+<div id="pseudonymized_txt" style="width:800px; margin:50px auto;">
+</div>
+<div id="tagged_txt" style="width:800px; margin:100px auto;">
+</div>
+<script src="script.js"></script>
+</body>
+</html>
