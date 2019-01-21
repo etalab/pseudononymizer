@@ -64,7 +64,7 @@ function print_results(event) {
     
 
     // var http = new XMLHttpRequest();
-    var url = 'http://localhost:5001/tag';
+    var url = 'https://pseudo.etalab.studio/tag';
 
     try2(url, text)
 
