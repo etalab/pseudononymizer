@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Pseudonymization Test</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <!-- Form -->
@@ -33,6 +33,6 @@
 </div>
 <div id="tagged_txt" style="width:800px; margin:100px auto;">
 </div>
-<script src="script.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}" charset="utf-8"></script>
 </body>
 </html>

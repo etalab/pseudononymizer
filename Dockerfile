@@ -14,7 +14,7 @@ RUN  conda env update --file environment.yml
 
 RUN wget https://github.com/psorianom/emnlp2017-bilstm-cnn-crf/archive/master.zip
 
-RUN unzip master.zip 
+RUN unzip master.zip
 
 EXPOSE 5001
 
