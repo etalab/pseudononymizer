@@ -1,83 +1,43 @@
-# A Simple Keras + deep learning REST API
+# A Simple Keras (UKP BiLSTM + CRF) pseudonymization REST 'API'
 
-This repository contains the code for [*Building a simple Keras + deep learning REST API*](https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html), published on the Keras.io blog.
+This repository contains the code for starting a REST PoC pseudonymizing service. It is based on [*Building a simple Keras + deep learning REST API*](https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html), and the biLSTM code from [the UKP lab](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf).
 
-The method covered here is intended to be instructional. It is _not_ meant to be production-level and capable of scaling under heavy load. If you're interested in a more advanced Keras REST API that leverages message queues and batching, [please refer to this tutorial](https://www.pyimagesearch.com/2018/01/29/scalable-keras-deep-learning-rest-api/).
-
-For an _even more advanced version_ that includes deploying a model to production, [refer to this blog post](https://www.pyimagesearch.com/2018/02/05/deep-learning-production-keras-redis-flask-apache/).
+This code is absolutely _not_ meant to be production-level and capable of scaling under heavy load.
 
 ## Getting started
 
-I assume you already have Keras (and a supported backend) installed on your system. From there you need to install [Flask](http://flask.pocoo.org/) and [requests](http://docs.python-requests.org/en/master/):
+The easiest way to start this service is by using docker and the associated Dockerfile in this repo. Assuming docker is installed, the only thing to do is:
 
+Building the docker image:
 ```sh
-$ pip install flask gevent requests
+$ docker build -t pseudonym_api:latest .
 ```
 
-Next, clone the repo:
+Next, initializing said image:
 
 ```sh
-$ git clone https://github.com/jrosebr1/simple-keras-rest-api.git
+$ docker run -d -p 5001:5001 pseudonym_api:latest
 ```
 
-## Starting the Keras server
-
-Below you can see the image we wish to classify, a _dog_, but more specifically a _beagle_:
-
-![dog](dog.jpg)
-
-The Flask + Keras server can be started by running:
-
-```sh
-$ python run_keras_server.py 
-Using TensorFlow backend.
- * Loading Keras model and Flask starting server...please wait until server has fully started
-...
- * Running on http://127.0.0.1:5000
-```
-
-You can now access the REST API via `http://127.0.0.1:5000`.
 
 ## Submitting requests to the Keras server
 
 Requests can be submitted via cURL:
 
 ```sh
-$ curl -X POST -F image=@dog.jpg 'http://localhost:5000/predict'
+$ curl -X POST -F text='M Soriano habite à Paris' 'http://localhost:5001/tag'
 {
-  "predictions": [
-    {
-      "label": "beagle", 
-      "probability": 0.9901360869407654
-    }, 
-    {
-      "label": "Walker_hound", 
-      "probability": 0.002396771451458335
-    }, 
-    {
-      "label": "pot", 
-      "probability": 0.0013951235450804234
-    }, 
-    {
-      "label": "Brittany_spaniel", 
-      "probability": 0.001283277408219874
-    }, 
-    {
-      "label": "bluetick", 
-      "probability": 0.0010894243605434895
-    }
-  ], 
-  "success": true
+   "pseudonim_text":"M \u2026 habite \u00e0 Paris",
+   "success":true,
+   "tagged_text":"M [B-PER]Soriano[/B-PER] habite \u00e0 Paris"
 }
 ```
 
-Or programmatically:
+Programmatically:
 
 ```sh
 $ python simple_request.py 
-1. beagle: 0.9901
-2. Walker_hound: 0.0024
-3. pot: 0.0014
-4. Brittany_spaniel: 0.0013
-5. bluetick: 0.0011
+M … habite à Paris
 ```
+
+Or as a test, via the web page ```example_form.html``` in the site/ folder.
