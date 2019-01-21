@@ -34,6 +34,7 @@ training_tags = None
 moses_tokenizer = MosesTokenizer(lang="fr")
 moses_detokenizer = MosesDetokenizer(lang="fr")
 
+
 # pattern = r"\@-\@|\w+['´`]|\w+|\S+"
 # regex_tokenizer = RegexpTokenizer(pattern, flags=re.UNICODE | re.IGNORECASE)
 
@@ -80,7 +81,8 @@ def pre_treat_text(raw_text):
     pre_treat_text = re.sub(r"\xa0", r" ", pre_treat_text)  # Replace this new line symbol by a space
     pre_treat_text = re.sub(r"_+", r"", pre_treat_text)  # Underscore kills Tagger training :/
     pre_treat_text = re.sub(r"’", r"'", pre_treat_text)
-    pre_treat_text = re.sub(r"^\s+$", r"", pre_treat_text, flags=re.MULTILINE)  # Remove empty lines only containing spaces
+    pre_treat_text = re.sub(r"^\s+$", r"", pre_treat_text,
+                            flags=re.MULTILINE)  # Remove empty lines only containing spaces
 
     pre_treated_lines = pre_treat_text.split("\n")
 
@@ -124,7 +126,7 @@ def prepare_input(text):
     return data_matrix, sentences
 
 
-def predict_text(text):
+def tag_text(text):
     # preprocess the image and prepare it for classification
     data_matrix, sentences = prepare_input(text)
 
@@ -199,8 +201,6 @@ def tag():
     # view
 
     data = {"success": False}
-
-    # ensure an image was properly uploaded to our endpoint
     if request.method == "POST":
         try:
             tags_to_use = []
@@ -218,21 +218,22 @@ def tag():
                             tags_to_use.append(g)
 
             if not tags_to_use:
-                logging.info("The desired tags were not found in the trained model {}. Using all the training tags.".format(training_tags))
+                logging.info(
+                    "The desired tags were not found in the trained model {}. Using all the training tags.".format(
+                        training_tags))
                 tags_to_use = training_tags
-
 
             if request.files.get("text"):
                 text = request.files["text"].read().decode("utf-8")
                 logging.info("Tagging text with model...")
-                conll_tagged_text = predict_text(text)
+                conll_tagged_text = tag_text(text)
                 logging.info("Preparing text as output...")
                 data["pseudonim_text"], data["tagged_text"] = prepare_output(conll_tagged_text, tags_to_use)
 
             elif request.form.get("text"):
                 text = request.form.get("text")
                 logging.info("Tagging text with model...")
-                conll_tagged_text = predict_text(text)
+                conll_tagged_text = tag_text(text)
                 logging.info("Preparing text as output...")
                 data["pseudonim_text"], data["tagged_text"] = prepare_output(conll_tagged_text, tags_to_use)
 
@@ -244,6 +245,7 @@ def tag():
         finally:
             # return the data dictionary as a JSON response
             return flask.jsonify(data)
+
 
 @app.after_request
 def after_request(response):

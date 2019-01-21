@@ -10,15 +10,11 @@ RUN  apt-get install build-essential -y
 
 RUN  apt-get install unzip
 
-#RUN conda install libgcc gcc -c conda-forge
-
 RUN  conda env update --file environment.yml
 
 RUN wget https://github.com/psorianom/emnlp2017-bilstm-cnn-crf/archive/master.zip
 
 RUN unzip master.zip 
-
-# RUN  conda activate pseudonim_REST
 
 EXPOSE 5001
 
