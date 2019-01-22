@@ -7,13 +7,14 @@
 #	python simple_request.py
 
 # import the necessary packages
+import os
 from itertools import groupby
 
 import flask
 from flask_cors import CORS, cross_origin
 # import sys
 # sys.path.append("/home/pavel/temp/ukp_forks/emnlp2017-bilstm-cnn-crf")
-from flask import request
+from flask import request, render_template
 # from nltk import sent_tokenize, RegexpTokenizer
 from sentence_splitter import split_text_into_sentences
 from neuralnets.BiLSTM import BiLSTM
@@ -256,6 +257,11 @@ def after_request(response):
     return response
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 # if this is the main thread of execution first load the model and
 # then start the server
 if __name__ == "__main__":
@@ -264,4 +270,5 @@ if __name__ == "__main__":
 
     load_names_processor()
     load_model()
-    app.run(port=5001, host="0.0.0.0")
+    debug = os.environ.get('FLASK_DEBUG', '0') == '1'
+    app.run(port=5001, host="0.0.0.0", debug=debug)
