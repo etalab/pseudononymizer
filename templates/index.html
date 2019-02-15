@@ -3,36 +3,53 @@
 <head>
     <meta charset="utf-8">
     <title>Pseudonymization Test</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 </head>
 <body>
+
+{% include "nav.html" %}
+
 <!-- Form -->
-<form action="" method="post" id="text-form" class="text-form">
-          <textarea name="query" class="form-control" rows="5">
-            Représenté par Me Florian DELISLE , avocat au barreau de LYON
+<div class="container">
 
-            Assisté de Me Pierre BESNARD, avocat au barreau de ROUEN
+<form action="" method="post" class="form-horizontal" id="text-form">
+    <div class="form-group">
+      <textarea name="query" class="form-control" rows="5">
+        Représenté par Me Florian DELISLE , avocat au barreau de LYON
 
-            INTIMÉES
+        Assisté de Me Pierre BESNARD, avocat au barreau de ROUEN
 
-            SARL MOS AMBULANCE
+        INTIMÉES
 
-            ayant son siège social 99 rue Brice Arsenault BP 53333
+        SARL MOS AMBULANCE
 
-            69008 LYON
+        ayant son siège social 99 rue Brice Arsenault BP 53333
 
-            Représentée par Me Gérôme COURTET, avocat au barreau de DOUAI
+        69008 LYON
 
-            Assistée de Me Léonard HENNEQUIN, avocat au barreau de REIMS, substitué par Me COULOMB, associé
-          </textarea>
-    <button type="submit" id="submit">Pseudonymize!</button>
+        Représentée par Me Gérôme COURTET, avocat au barreau de DOUAI
+
+        Assistée de Me Léonard HENNEQUIN, avocat au barreau de REIMS, substitué par Me COULOMB, associé
+      </textarea>
+    </div>
+    <div class="form-group d-flex flex-row-reverse">
+      <button class="btn btn-primary" type="submit" id="submit">Pseudonymize!</button>
+    </div>
 </form>
 
 <!-- Result -->
-<div id="pseudonymized_txt" style="width:800px; margin:50px auto;">
+<div class="row">
+  <div id="pseudonymized_txt" class="col col-md-6"></div>
+
+  <div id="tagged_txt" class="col col-md-6"></div>
 </div>
-<div id="tagged_txt" style="width:800px; margin:100px auto;">
+
 </div>
+
 <script src="{{ url_for('static', filename='script.js') }}" charset="utf-8"></script>
 </body>
 </html>

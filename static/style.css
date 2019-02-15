@@ -1,19 +1,39 @@
-.form-control {
-    
-    display:block;
-    width:100%;
-    height:68px;
-    padding:6px 12px;
-    font-size:14px;
-    line-height:1.42857143;
-    color:#555;
-    background-color:#fff;
-    background-image:none;
-    border:1px solid #ccc;
-    border-radius:4px;
-    -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075);
-    box-shadow:inset 0 1px 1px rgba(0,0,0,.075);
-    -webkit-transition:border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-    -o-transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-    transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s
-   }
+.B-AUX {
+  display: inline-block;
+  border-bottom: 3px solid #0074D9;
+}
+
+.I-AUX {
+  display: inline-block;
+  border-bottom: 3px solid #7FDBFF;
+}
+
+.B-LOC {
+  display: inline-block;
+  border-bottom: 3px solid #2ECC40;
+}
+
+.I-LOC {
+  display: inline-block;
+  border-bottom: 3px solid #01FF70 ;
+}
+
+.B-DATE {
+  display: inline-block;
+  border-bottom: 3px solid #FF851B;
+}
+
+.I-DATE {
+  display: inline-block;
+  border-bottom: 3px solid #FFDC00;
+}
+
+.B-PER {
+  display: inline-block;
+  border-bottom: 3px solid #B10DC9;
+}
+
+.I-PER {
+  display: inline-block;
+  border-bottom: 3px solid #F012BE;
+}

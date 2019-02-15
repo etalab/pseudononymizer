@@ -1,5 +1,43 @@
 var form = document.getElementById('text-form');
 
+String.prototype.replaceAll = function(searchStr, replaceStr) {
+	var str = this;
+
+    // no match exists in string?
+    if(str.indexOf(searchStr) === -1) {
+        // return string
+        return str;
+    }
+
+    // replace and remove first match, and do another recursirve search/replace
+    return (str.replace(searchStr, replaceStr)).replaceAll(searchStr, replaceStr);
+}
+
+
+function transform(text){
+
+  var tags = [
+    "B-AUX",
+    "I-AUX",
+    "B-LOC",
+    "I-LOC",
+    "B-DATE",
+    "I-DATE",
+    "B-PER",
+    "I-PER"
+  ]
+
+  for (var t in tags) {
+    var tag = tags[t]
+
+    console.log("[${tag}]")
+
+    text = text.replaceAll("["+tag+"]", "<span class=\""+tag+"\">")
+    text = text.replaceAll("[/"+tag+"]", "</span>")
+  }
+
+  return text
+}
 
 form.addEventListener("submit", print_results);
 
@@ -41,13 +79,15 @@ function try2(url_API, text, tags=false){
     .then(function(data){
         var div_pseudonym = document.getElementById('pseudonymized_txt');
         var div_tagged = document.getElementById('tagged_txt');
-        div_tagged.title = "SUPER TAGGED!"  
+        div_tagged.title = "SUPER TAGGED!"
         div_pseudonym.innerHTML = "<h3> " + "PSEUDONYMIZED TEXT" + "</h3>";
-        div_pseudonym.innerHTML += "<p> " + nl2br(data.pseudonim_text);
-        
+        div_pseudonym.innerHTML += "<p> " + nl2br(data.pseudonim_text) + "</p>";
+
         div_tagged.innerHTML = "<h3> " + "TAGGED TEXT" + "</h3>";
-        div_tagged.innerHTML += "<p> " + nl2br(data.tagged_text);
-        // alert( JSON.stringify( data ) ) 
+        // div_tagged.innerHTML += "<p> " + nl2br(data.tagged_text);
+        div_tagged.innerHTML += "<p> " + transform(nl2br(data.tagged_text)) + "</p>";
+
+        // alert( JSON.stringify( data ) )
         })
 }
 
@@ -61,7 +101,7 @@ function print_results(event) {
   } else {
 
     const text =  this.elements.query.value;
-    
+
 
     // var http = new XMLHttpRequest();
     var url = 'https://pseudo.etalab.studio/tag';
@@ -70,4 +110,3 @@ function print_results(event) {
 
   }
 }
-
