@@ -1,6 +1,16 @@
 # A Simple Keras (UKP BiLSTM + CRF) pseudonymization REST 'API'
 
-This repository contains the code for starting a REST PoC pseudonymizing service. It is based on [*Building a simple Keras + deep learning REST API*](https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html), and the biLSTM code from [the UKP lab](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf).
+## Description
+This repository contains the code for starting a REST PoC pseudonymizing service. 
+
+Pseudonymization here means finding certain identifiying entities within a text and replacing them with a token. For example, we may replace first and last names with a chain of characters ("..." or "XXXXX") such that *Mr. Jean PARMENTIER* becomes *Mr. ... ...* 
+
+In order to find said entities, we train a supervised structured model. This task is more generally known as named entity recognition. 
+
+This project is based on two main building blocks:
+1.  The algorithm used to train the supervised model is the now classic biLSTM+CRF. The implementation used is that from [the UKP lab](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf). To train your own model for this application, you may  employ the fork created [here](https://github.com/psorianom/emnlp2017-bilstm-cnn-crf). 
+
+2. Once the model trained, we base our REST service on the code from [*Building a simple Keras + deep learning REST API*](https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html).
 
 This code is absolutely _not_ meant to be production-level and capable of scaling under heavy load.
 

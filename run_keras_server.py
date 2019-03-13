@@ -15,7 +15,6 @@ from flask_cors import CORS, cross_origin
 # import sys
 # sys.path.append("/home/pavel/temp/ukp_forks/emnlp2017-bilstm-cnn-crf")
 from flask import request, render_template
-# from nltk import sent_tokenize, RegexpTokenizer
 from sentence_splitter import split_text_into_sentences
 from neuralnets.BiLSTM import BiLSTM
 from util.preprocessing import load_names, FR_NAMES_PATH, addCharInformation, addCasingInformation, \
@@ -78,26 +77,26 @@ def load_model():
 def pre_treat_text(raw_text):
     # TODO: We should really use the same tokenizer used to generate the train.iob file (moses) as doctrine did
     # pre_treat_text = re.sub(r"(\w{2,})-(\w+)", r"\1@-@\2", raw_text, flags=re.IGNORECASE)  # Add @ to dashes
-    pre_treat_text = re.sub(r"\n{2,}", r"\n", raw_text)  # Replace two or more lines by a single line
-    pre_treat_text = re.sub(r"\xa0", r" ", pre_treat_text)  # Replace this new line symbol by a space
-    pre_treat_text = re.sub(r"_+", r"", pre_treat_text)  # Underscore kills Tagger training :/
-    pre_treat_text = re.sub(r"’", r"'", pre_treat_text)
-    pre_treat_text = re.sub(r"^\s+$", r"", pre_treat_text,
+    pre_treated_text = re.sub(r"\n{2,}", r"\n", raw_text)  # Replace two or more lines by a single line
+    pre_treated_text = re.sub(r"\xa0", r" ", pre_treated_text)  # Replace this new line symbol by a space
+    pre_treated_text = re.sub(r"_+", r"", pre_treated_text)  # Underscore kills Tagger training :/
+    pre_treated_text = re.sub(r"’", r"'", pre_treated_text)
+    pre_treated_text = re.sub(r"^\s+$", r"", pre_treated_text,
                             flags=re.MULTILINE)  # Remove empty lines only containing spaces
 
-    pre_treated_lines = pre_treat_text.split("\n")
+    pre_treated_lines = pre_treated_text.split("\n")
 
-    return pre_treated_lines, pre_treat_text
+    return pre_treated_lines, pre_treated_text
 
 
 def post_treat_text(text):
-    post_treat_text = re.sub(r"(\.\.\.\s?){2,}", r"...", text)
-    post_treat_text = re.sub(r"(…\s?)+", r"… ", text)
-    post_treat_text = re.sub(r"(\s\w')\s(.)", r"\1\2", post_treat_text)  # Remove space after apostrophe
-    post_treat_text = re.sub(r"(\()\s+(\w)", r"\1\2", post_treat_text)  # Space after left parenthesis
-    post_treat_text = re.sub(r"(.)\s@\s?-\s?@\s(.)", r"\1-\2", post_treat_text)  # Remove Moses tokenizer dash @ symbol
+    post_treated_text = re.sub(r"(\.\.\.\s?){2,}", r"...", text)
+    post_treated_text = re.sub(r"(…\s?)+", r"… ", text)
+    post_treated_text = re.sub(r"(\s\w')\s(.)", r"\1\2", post_treated_text)  # Remove space after apostrophe
+    post_treated_text = re.sub(r"(\()\s+(\w)", r"\1\2", post_treated_text)  # Space after left parenthesis
+    post_treated_text = re.sub(r"(.)\s@\s?-\s?@\s(.)", r"\1-\2", post_treated_text)  # Remove Moses tokenizer dash @ symbol
     # post_treat_text = re.sub(r"\w(\.)(\.{2,})", r"\1 \2", post_treat_text)  # Fix Moses pasting three dots together with precedent token
-    return post_treat_text
+    return post_treated_text
 
 
 def tokenize_text(text_lines):
