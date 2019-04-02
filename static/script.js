@@ -1,4 +1,4 @@
-var form = document.getElementById('text-form');
+//var form = document.getElementById('text-form');
 
 String.prototype.replaceAll = function(searchStr, replaceStr) {
 	var str = this;
@@ -39,7 +39,7 @@ function transform(text){
   return text
 }
 
-form.addEventListener("submit", print_results);
+//form.addEventListener("submit", print_results);
 
 function nl2br (str, is_xhtml) {
   // http://kevin.vanzonneveld.net
@@ -63,7 +63,7 @@ function nl2br (str, is_xhtml) {
   return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
-function try2(url_API, text, tags=false){
+function format_response(url_API, text, tags=false){
     var data = new FormData();
     data.append( "text", text);
     // if (tags != false)
@@ -104,9 +104,7 @@ function print_results(event) {
 
 
     // var http = new XMLHttpRequest();
-    var url = 'https://pseudo.etalab.studio/tag';
-
-    try2(url, text)
+    format_response(SERVICE_URL, text)
 
   }
 }

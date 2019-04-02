@@ -28,11 +28,14 @@ logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 CORS(app)
-model = None
-keyword_processor = None
-training_tags = None
-moses_tokenizer = MosesTokenizer(lang="fr")
-moses_detokenizer = MosesDetokenizer(lang="fr")
+
+MODEL_PATH = None
+PSEUDO_SERVICE_URL = True
+MODEL = None
+KEYWORD_PROCESSOR = None
+TRAINING_TAGS = None
+MOSES_TOKENIZER = MosesTokenizer(lang="fr")
+MOSES_DETOKENIZER = MosesDetokenizer(lang="fr")
 
 
 # pattern = r"\@-\@|\w+['´`]|\w+|\S+"
@@ -42,12 +45,12 @@ moses_detokenizer = MosesDetokenizer(lang="fr")
 def load_names_processor():
     # :: Load vocabulary for is_name features ::
 
-    global keyword_processor
+    global KEYWORD_PROCESSOR
     from flashtext import KeywordProcessor
-    keyword_processor = KeywordProcessor()
-    keyword_processor.add_keywords_from_list(list(load_names(FR_NAMES_PATH).keys()))
+    KEYWORD_PROCESSOR = KeywordProcessor()
+    KEYWORD_PROCESSOR.add_keywords_from_list(list(load_names(FR_NAMES_PATH).keys()))
     logging.info("Loaded french proper names...")
-    return keyword_processor
+    return KEYWORD_PROCESSOR
 
 
 def get_model_tags(model):
@@ -65,12 +68,13 @@ def get_model_tags(model):
 
 def load_model():
     # load the pre-trained Keras model
-    global model
-    global training_tags
+    global MODEL
+    global TRAINING_TAGS
 
-    model = BiLSTM.loadModel("./model/model_jurica_rest")
-    model.models["jurica_enriched"]._make_predict_function()  # This is to avoid troubles with  Flask's threads
-    training_tags = get_model_tags(model)
+    MODEL = BiLSTM.loadModel("./model/rest_model.h5")
+    loaded_model = list(MODEL.models.values())[0]
+    loaded_model._make_predict_function()  # This is to avoid troubles with  Flask's  multiple threads
+    TRAINING_TAGS = get_model_tags(MODEL)
     logging.info("Loaded NER model...")
 
 
@@ -91,7 +95,7 @@ def pre_treat_text(raw_text):
 
 def post_treat_text(text):
     post_treated_text = re.sub(r"(\.\.\.\s?){2,}", r"...", text)
-    post_treated_text = re.sub(r"(…\s?)+", r"… ", text)
+    post_treated_text = re.sub(r"(…\s?)+", r"… ", post_treated_text)
     post_treated_text = re.sub(r"(\s\w')\s(.)", r"\1\2", post_treated_text)  # Remove space after apostrophe
     post_treated_text = re.sub(r"(\()\s+(\w)", r"\1\2", post_treated_text)  # Space after left parenthesis
     post_treated_text = re.sub(r"(.)\s@\s?-\s?@\s(.)", r"\1-\2", post_treated_text)  # Remove Moses tokenizer dash @ symbol
@@ -108,7 +112,7 @@ def tokenize_text(text_lines):
     for line in text_lines:
         sentences = split_text_into_sentences(line, language="fr")
         for sentence in sentences:
-            tokens = moses_tokenizer.tokenize(sentence, aggressive_dash_splits=True, escape=False)
+            tokens = MOSES_TOKENIZER.tokenize(sentence, aggressive_dash_splits=True, escape=False)
             sentences_tokens.append(tokens)
 
     return sentences_tokens
@@ -121,8 +125,8 @@ def prepare_input(text):
     sentences = [{'tokens': sent} for sent in tokenized_sentences]
     addCharInformation(sentences)
     addCasingInformation(sentences)
-    addIsNameInformation(sentences, keyword_processor=keyword_processor)
-    data_matrix = createMatrices(sentences, model.mappings, True)
+    addIsNameInformation(sentences, keyword_processor=KEYWORD_PROCESSOR)
+    data_matrix = createMatrices(sentences, MODEL.mappings, True)
     return data_matrix, sentences
 
 
@@ -132,7 +136,7 @@ def tag_text(text):
 
     # classify the input text and then initialize the list
     # of predictions to return to the client
-    tags = model.tagSentences(data_matrix)
+    tags = MODEL.tagSentences(data_matrix)
     tagged_conll_sequences = []
 
     # loop over the results and add them to the list of
@@ -183,7 +187,7 @@ def prepare_output(tagged_conll_sequences, tags_to_use, replacement_token="…")
         tagged_phrases.append(tokens_tagged)
 
     # detokenize = lambda x: "\n\n".join([" ".join(f) for f in x])
-    moses_detok = lambda x: "\n\n".join([moses_detokenizer.detokenize(f, unescape=False) for f in x])
+    moses_detok = lambda x: "\n\n".join([MOSES_DETOKENIZER.detokenize(f, unescape=False) for f in x])
     pseudonim_text = moses_detok(pseudonim_phrases)
     tagged_text = moses_detok(tagged_phrases)
 
@@ -207,21 +211,21 @@ def tag():
             if not request.form.get("tag"):
                 #  Use all tags possible
                 logging.info("No tags were indicated. Using all the training tags {}.".format(
-                    training_tags))
-                tags_to_use = training_tags
+                    TRAINING_TAGS))
+                tags_to_use = TRAINING_TAGS
             else:
                 tags_param = request.form.get("tag").split(",")
 
                 for t in tags_param:
-                    for g in training_tags:
+                    for g in TRAINING_TAGS:
                         if t in g:
                             tags_to_use.append(g)
 
             if not tags_to_use:
                 logging.info(
                     "The desired tags were not found in the trained model {}. Using all the training tags.".format(
-                        training_tags))
-                tags_to_use = training_tags
+                        TRAINING_TAGS))
+                tags_to_use = TRAINING_TAGS
 
             if request.files.get("text"):
                 text = request.files["text"].read().decode("utf-8")
@@ -258,7 +262,9 @@ def after_request(response):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    global MODEL_PATH
+
+    return render_template('index.html', service_url=PSEUDO_SERVICE_URL)
 
 
 # if this is the main thread of execution first load the model and
@@ -268,6 +274,9 @@ if __name__ == "__main__":
         "* Loading Keras (UKP EMNLP BiLSTM+CRF) model and Flask starting server...\n\tplease wait until server has fully started")
 
     load_names_processor()
-    load_model()
+    MODEL_PATH = os.environ.get('PSEUDO_MODEL_PATH', './model/rest_model')
+    PSEUDO_SERVICE_URL = os.environ.get('PSEUDO_SERVICE_URL', 'http://0.0.0.0:5001/tag')
     debug = os.environ.get('FLASK_DEBUG', '0') == '1'
+    load_model()
+
     app.run(port=5001, host="0.0.0.0", debug=debug)

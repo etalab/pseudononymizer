@@ -33,10 +33,12 @@
 
         Représentée par Me Gérôme COURTET, avocat au barreau de DOUAI
 
-        Assistée de Me Léonard HENNEQUIN, avocat au barreau de REIMS, substitué par Me COULOMB, associé
+        Assistée de Me Léonard HENNEQUIN, avocat au barreau de REIMS, substitué par Me COULOMB, associé de
+
+        Monsieur Mourad GULER  né le 29 avril 1936 à 50 Îlet Du Gosier 30520 FONTAINE-LÈS-BOULANS
       </textarea>
     </div>
-    <div class="form-group d-flex flex-row-reverse">
+    <div class="form-group d    -flex flex-row-reverse">
       <button class="btn btn-primary" type="submit" id="submit">Pseudonymize!</button>
     </div>
 </form>
@@ -51,5 +53,10 @@
 </div>
 
 <script src="{{ url_for('static', filename='script.js') }}" charset="utf-8"></script>
+<script>
+    var form = document.getElementById('text-form');
+    var SERVICE_URL = '{{ service_url }}'
+    form.addEventListener("submit", print_results);
+</script>
 </body>
 </html>
