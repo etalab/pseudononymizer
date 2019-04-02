@@ -8,7 +8,7 @@ Pseudonymization here means finding certain identifiying entities within a text 
 In order to find said entities, we train a supervised structured model. This task is more generally known as named entity recognition. 
 
 This project is based on two main building blocks:
-1.  The algorithm used to train the supervised model is the now classic biLSTM+CRF. The implementation used is that from [the UKP lab](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf). To train your own model for this application, you may  employ the fork created [here](https://github.com/psorianom/emnlp2017-bilstm-cnn-crf).  Sample, fake data is available overthere to train a model. Also, a training script is also ready to be used to do start the process. Still, we recommend you to use your own annotated  set to get better results. 
+1.  The algorithm used to train the supervised model is the now classic biLSTM+CRF. The implementation used is that from [the UKP lab](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf). To train your own model for this application, you may employ the fork created [here](https://github.com/psorianom/emnlp2017-bilstm-cnn-crf).  Sample, and fake, data is available over there to train a model. Also, a training script is ready to be used to do start the process. We do recommend you to use your own annotated  set to get better results. 
 
 
 2. Once the model trained, and saved in the right position (in the */models* folder), we base our REST service on the code from [*Building a simple Keras + deep learning REST API*](https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html).
