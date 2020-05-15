@@ -1,4 +1,7 @@
+# This project is no longer in development. It has been superseeded by https://github.com/etalab-ia/pseudo_api and https://github.com/etalab-ia/pseudo_app
+
 # A Simple Keras (UKP BiLSTM + CRF) pseudonymization REST 'API'
+
 
 ## Description
 This repository contains the code for starting a REST PoC pseudonymizing service. 
