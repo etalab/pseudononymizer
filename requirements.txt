@@ -1,6 +1,6 @@
 absl-py==0.7.0
 astor==0.7.1
-bleach==3.1.0
+bleach==3.1.4
 certifi==2019.3.9
 Click==7.0
 flashtext==2.7
