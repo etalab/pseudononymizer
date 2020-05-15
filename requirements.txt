@@ -33,7 +33,7 @@ scipy==1.1.0
 sentence-splitter==1.4
 six==1.12.0
 tensorboard==1.12.2
-tensorflow==1.12.0
+tensorflow==1.15.2
 termcolor==1.1.0
 tqdm==4.29.1
 webencodings==0.5.1
